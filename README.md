@@ -4,7 +4,7 @@
 
 ## An introduction to epidemic modelling for functional programmers
 
-*Darren W will give a basic introduction to epidemics and how to write functional code for simulating their behaviour. Most of the examples will require only minimal maths. There will be some simple coding exercises for audience participation, and informal chat over a beer (BYO!).*
+*I will give a basic introduction to epidemics and how to write functional code for simulating their behaviour. Most of the examples will require only minimal maths. There will be some simple coding exercises for audience participation, and informal chat over a beer (BYO!).*
 
 ### Important disclaimer - please read!
 
@@ -16,8 +16,6 @@
 * The directory [stoch](stoch/) contains another Scala `sbt` project, but this one includes a dependency on my [scala-smfsb](https://github.com/darrenjw/scala-smfsb) library for stochastic simulation of SEIR models in continuous time.
 
 
-Copyright (C) 2020 Darren J Wilkinson
-
-darrenjw.github.io
+Copyright (C) 2020 [Darren J Wilkinson](https://darrenjw.github.io/)
 
 #### eof
