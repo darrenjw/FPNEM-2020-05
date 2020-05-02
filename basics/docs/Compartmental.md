@@ -12,7 +12,7 @@ One of the simplest infectious disease models is the [*Susceptible-Infectious-Re
 
 The important extension relative to the simple growth models we looked at is that we now have three compartments: *S*, *I* and *R*.
 
-*S* denotes the susceptibles and *I* the infectious, as before, and *R* represents the individuals who are neither *S* nor *I*. These are typically individuals who were *I* but are now no longer infectious, either because they have recovered or died.
+*S* denotes the susceptibles and *I* the infectious, as before, and *R* represents the individuals who are neither *S* nor *I*. These are typically individuals who were *I* but are now no longer infectious, because they have been isolated, have recovered, or died.
 
 ## SIR transition modelling
 
@@ -50,7 +50,8 @@ update(0.001, 0.01)(p0)
 ## Population dynamics
 
 ```scala mdoc:silent
-val pop = Stream.iterate(p0)(update(1.0e-7, 0.1))
+val beta = 5.0e-8; val gamma = 0.1
+val pop = Stream.iterate(p0)(update(beta, gamma))
 ```
 ```scala mdoc
 pop.take(8).toList
@@ -120,4 +121,66 @@ Overlay(
 ```
 
 
+## Basic reproduction number, $R_0$
 
+If we think about how the number of infectious individuals, $I$, evolves, it is clearly increased by the infection process and decreased by the removal process. If these two processes are applied in parallel (as opposed to sequentially, as we did), then the change in $I$ at time $t$ is
+$$ I_{t+1}-I_t = \beta S_tI_t - \gamma I_t = \left(\frac{\beta S_t}{\gamma} - 1\right)\gamma I_t $$
+Near the start of the epidemic, $S_t\simeq N$, the total population size, and so
+$$ I_{t+1}-I_t \simeq \left(\frac{\beta N}{\gamma} - 1\right)\gamma I_t $$
+So, if $\beta N/\gamma > 1$, then the number of infectious individuals will increase exponentially.
+
+$\beta N/\gamma$ is known as the [*basic reproduction number*](https://en.wikipedia.org/wiki/Basic_reproduction_number), and is often denoted $R_0$, which is confusing, since it is not the initial number of removed. It can be interpreted as the average number of individuals that each infectious person will infect before removal.
+
+## Flattening the curve
+
+There are different ways to parametrise the SIR model, but the way we have done it, our basic reproduction number is
+$$
+R_0 = \frac{\beta N}{\gamma}
+$$
+```scala mdoc
+val R0 = beta * p0.S / gamma
+```
+Since $N$ is fixed, $R_0$ is reduced by reducing the infection rate $\beta$, or increasing the removal rate $\gamma$.
+
+So-called "social distancing" policies reduce $\beta$, and strict self-isolation policies increase $\gamma$. Note that $1/\gamma$ is the average time before an infectious individual is removed from the population.
+
+```scala mdoc:silent
+val popF = Stream.iterate(p0)(
+    update(0.6 * beta, 1.2 * gamma))
+```
+
+## Reduced $\beta$ and increased $\gamma$
+
+```scala mdoc:evilplot:fsir.png
+val fspoints = popF.zipWithIndex.
+  map{case (pt, t) => Point(t, pt.S)}.
+  take(200).toList
+val fipoints = popF.zipWithIndex.
+  map{case (pt, t) => Point(t, pt.I)}.
+  take(200).toList
+val frpoints = popF.zipWithIndex.
+  map{case (pt, t) => Point(t, pt.R)}.
+  take(200).toList
+
+Overlay(
+ ScatterPlot.series(fspoints, "S", dodgerBlue),
+ ScatterPlot.series(fipoints, "I", crimson),
+ ScatterPlot.series(frpoints, "R", green)
+ ).xAxis()
+  .yAxis()
+  .overlayLegend()
+  .frame()
+  .title("SIR model (flattened)")
+  .xLabel("time")
+  .yLabel("Number of individuals")
+  .render()
+```
+
+
+# SEIR model
+
+## SEIR model
+
+One potential issue with the SIR model is that it assumes that individuals become infectious as soon as they are infected. This may be a reasonable approximation for some diseases, but some diseases have a significant latent period between when an individual becomes infected and when they become infectious. 
+
+The SEIR model addresses this problem by introducing an additional population class, *Exposed* (*E*), between *S* and *I*. So infected individuals initially transition from *S* to *E*, at rate $\beta S I$, as previously discussed. Then *E* individuals transition to *I* at rate $a E$, where $1/a$ is the average incubation period.
