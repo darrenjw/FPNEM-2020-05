@@ -146,21 +146,21 @@ So-called "social distancing" policies reduce $\beta$, and strict self-isolation
 
 ```scala mdoc:silent
 val popF = Stream.iterate(p0)(
-    update(0.6 * beta, 1.2 * gamma))
+    update(0.5 * beta, 1.3 * gamma))
 ```
 
-## Reduced $\beta$ and increased $\gamma$
+## Reduced $\beta$ and increased $\gamma$ (note change in time axis)
 
 ```scala mdoc:evilplot:fsir.png
 val fspoints = popF.zipWithIndex.
   map{case (pt, t) => Point(t, pt.S)}.
-  take(200).toList
+  take(300).toList
 val fipoints = popF.zipWithIndex.
   map{case (pt, t) => Point(t, pt.I)}.
-  take(200).toList
+  take(300).toList
 val frpoints = popF.zipWithIndex.
   map{case (pt, t) => Point(t, pt.R)}.
-  take(200).toList
+  take(300).toList
 
 Overlay(
  ScatterPlot.series(fspoints, "S", dodgerBlue),
@@ -177,6 +177,22 @@ Overlay(
 ```
 
 
+## Herd immunity
+
+You can see from the previous plot that not everyone gets infected in this flattened scenario. This is because the number of infection events is proportional to the number of susceptibles as well as the number of infectious individuals. So, if the number of susceptibles is sufficiently small, infections won't be able to take off.
+
+We previously observed that
+$$ I_{t+1}-I_t = \left(\frac{\beta S_t}{\gamma} - 1\right)\gamma I_t, $$
+and so if $S_t$ is less than $\gamma/\beta$, the epidemic should not be able to take off.
+For our original simulation we had
+```scala mdoc
+gamma / beta
+```
+but we later modified this to
+```scala mdoc
+1.3 * gamma / (0.5 * beta)
+```
+
 # SEIR model
 
 ## SEIR model
@@ -184,3 +200,4 @@ Overlay(
 One potential issue with the SIR model is that it assumes that individuals become infectious as soon as they are infected. This may be a reasonable approximation for some diseases, but some diseases have a significant latent period between when an individual becomes infected and when they become infectious. 
 
 The SEIR model addresses this problem by introducing an additional population class, *Exposed* (*E*), between *S* and *I*. So infected individuals initially transition from *S* to *E*, at rate $\beta S I$, as previously discussed. Then *E* individuals transition to *I* at rate $a E$, where $1/a$ is the average incubation period.
+

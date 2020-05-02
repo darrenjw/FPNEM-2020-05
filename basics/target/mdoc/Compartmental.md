@@ -103,12 +103,30 @@ So-called "social distancing" policies reduce $\beta$, and strict self-isolation
 
 ```scala
 val popF = Stream.iterate(p0)(
-    update(0.6 * beta, 1.2 * gamma))
+    update(0.5 * beta, 1.3 * gamma))
 ```
 
-## Reduced $\beta$ and increased $\gamma$
+## Reduced $\beta$ and increased $\gamma$ (note change in time axis)
 
 ![](fsir.png)
+
+## Herd immunity
+
+You can see from the previous plot that not everyone gets infected in this flattened scenario. This is because the number of infection events is proportional to the number of susceptibles as well as the number of infectious individuals. So, if the number of susceptibles is sufficiently small, infections won't be able to take off.
+
+We previously observed that
+$$ I_{t+1}-I_t = \left(\frac{\beta S_t}{\gamma} - 1\right)\gamma I_t, $$
+and so if $S_t$ is less than $\gamma/\beta$, the epidemic should not be able to take off.
+For our original simulation we had
+```scala
+gamma / beta
+// res5: Double = 2000000.0000000002
+```
+but we later modified this to
+```scala
+1.3 * gamma / (0.5 * beta)
+// res6: Double = 5200000.0
+```
 
 # SEIR model
 
@@ -117,3 +135,4 @@ val popF = Stream.iterate(p0)(
 One potential issue with the SIR model is that it assumes that individuals become infectious as soon as they are infected. This may be a reasonable approximation for some diseases, but some diseases have a significant latent period between when an individual becomes infected and when they become infectious. 
 
 The SEIR model addresses this problem by introducing an additional population class, *Exposed* (*E*), between *S* and *I*. So infected individuals initially transition from *S* to *E*, at rate $\beta S I$, as previously discussed. Then *E* individuals transition to *I* at rate $a E$, where $1/a$ is the average incubation period.
+
