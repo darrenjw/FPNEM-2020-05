@@ -170,3 +170,10 @@ ScatterPlot(lpoints)
   .render()
 ```
 
+## Logistic growth model
+
+One possibly undesireable feature of this model is that it assumes at after one day (or other time unit) that all infectious individuals cease to be infectious and immediately become susceptible again. A simple variation on this is to assume that individuals remain infectious, leading to the relation
+$$x_{t+1} = x_t + rx_t(P-x_t).$$
+But in fact, we can re-write this as
+$$x_{t+1} = x_t + rx_t\left(P+\frac{1}{r}\right-x_t),$$
+which is the same as the logistic map, but with the population size differing by $1/r$.
