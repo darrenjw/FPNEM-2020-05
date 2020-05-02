@@ -47,6 +47,10 @@ This just confirms the closed-form solution of this model:
 
 $$x_t=x_0s^t.$$
 
+## Plot
+
+
+
 ## Geometric growth, exponential growth, and logarithms
 
 The number of infected people in this model is said to follow a *geometric* sequence. So the growth in such a sequence should probably be referred to as *geometric growth*. However, this is just the discrete time version of exponential growth. The growth is said to be exponential because it can be described by an exponential curve. Since logarithms are the inverse of exponential functions, the logarithm of values in a geometric series have *arithmetic* or *linear* growth.
