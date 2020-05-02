@@ -33,7 +33,7 @@ xs.take(5).toList
 
 ## Continuous approximation to population size
 
-Of course, there is no reason to assume that the "average" number of people infected each day is an integer, so to model the "average" size of the infected population, we must switch to `Double`s.
+Of course, there is no reason to assume that the "average" number of people infected each day is an integer, so to model the "expected" size of the infected population, we must switch to `Double`s.
 
 ```scala mdoc:reset:silent
 val x0 = 2.0; val s = 1.5
@@ -47,13 +47,42 @@ This just confirms the closed-form solution of this model:
 
 $$x_t=x_0s^t.$$
 
-## Plot
+## Plot using [EvilPlot](https://cibotech.github.io/evilplot/)
 
+```scala mdoc:silent
+import com.cibo.evilplot._
+import com.cibo.evilplot.plot._
+import com.cibo.evilplot.plot.aesthetics.DefaultTheme._
+import com.cibo.evilplot.numeric.Point
+
+val points = xs.zipWithIndex.
+  map{case (xt, t) => Point(t, xt)}.
+  take(25).toList
+
+ScatterPlot(points)
+  .xAxis()
+  .yAxis()
+  .frame()
+  .xLabel("t")
+  .yLabel("x(t)")
+  .render()
+```
+## Plot of $x_t$ against $t$
+
+```scala mdoc:evilplot:exp.png
+ScatterPlot(points)
+  .xAxis()
+  .yAxis()
+  .frame()
+  .xLabel("t")
+  .yLabel("x(t)")
+  .render()
+```
 
 
 ## Geometric growth, exponential growth, and logarithms
 
-The number of infected people in this model is said to follow a *geometric* sequence. So the growth in such a sequence should probably be referred to as *geometric growth*. However, this is just the discrete time version of exponential growth. The growth is said to be exponential because it can be described by an exponential curve. Since logarithms are the inverse of exponential functions, the logarithm of values in a geometric series have *arithmetic* or *linear* growth.
+The number of infected people in this model is said to follow a *geometric* sequence. So the growth in such a sequence should probably be referred to as *geometric growth*. However, this is just the discrete time version of [exponential growth](https://en.wikipedia.org/wiki/Exponential_growth). The growth is said to be exponential because it can be described by an exponential curve. Since [logarithms](https://en.wikipedia.org/wiki/Logarithm) are the inverse of exponential functions, the logarithm of values in a geometric series have *arithmetic* or *linear* growth.
 
 This is why people often use a logarithmic $y$-axis on epidemic plots. Transforming our recurrence $x_t = sx_{t-1}$ gives 
 $$\log x_t = \log s + \log x_{t-1}.$$
@@ -98,25 +127,46 @@ xs.take(4).toList
 ```
 So for an appropriate choice of $r$, the early behaviour of this epidemic is very similar to that of the exponential growth model. The differences kick in later in the epidemic.
 
-## blah
+## Plot
 
-```scala mdoc:evilplot:scatterplot.png
+```scala mdoc:evilplot:log-map.png
 import com.cibo.evilplot._
 import com.cibo.evilplot.plot._
 import com.cibo.evilplot.plot.aesthetics.DefaultTheme._
 import com.cibo.evilplot.numeric.Point
 
-val data = Seq.tabulate(90) { i =>
-  val degree = i * 8
-  val radian = math.toRadians(degree)
-  Point(i.toDouble, math.sin(radian))
-}
+val points = xs.zipWithIndex.
+  map{case (xt, t) => Point(t, xt)}.
+  take(30).toList
 
-ScatterPlot(data)
+ScatterPlot(points)
   .xAxis()
   .yAxis()
   .frame()
-  .xLabel("x")
-  .yLabel("y")
+  .xLabel("t")
+  .yLabel("x(t)")
   .render()
 ```
+
+
+## Log Plot
+
+```scala mdoc:evilplot:log-log-map.png
+import com.cibo.evilplot._
+import com.cibo.evilplot.plot._
+import com.cibo.evilplot.plot.aesthetics.DefaultTheme._
+import com.cibo.evilplot.numeric.Point
+
+val lpoints = xs.zipWithIndex.
+  map{case (xt, t) => Point(t, math.log(xt))}.
+  take(30).toList
+
+ScatterPlot(lpoints)
+  .xAxis()
+  .yAxis()
+  .frame()
+  .xLabel("t")
+  .yLabel("log x(t)")
+  .render()
+```
+
