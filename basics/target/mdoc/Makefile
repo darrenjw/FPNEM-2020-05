@@ -1,6 +1,6 @@
 # Makefile
 
-TARGETS=Growth.pdf
+TARGETS=Growth.pdf Compartmental.pdf
 
 FORCE:
 	make $(TARGETS)
