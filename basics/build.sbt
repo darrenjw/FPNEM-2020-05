@@ -11,10 +11,7 @@ libraryDependencies  ++= Seq(
   "com.cibo" %% "evilplot" % "0.6.3", // 0.7.0
   "com.cibo" %% "evilplot-repl" % "0.6.3", // 0.7.0
   "org.scalameta" %% "mdoc" % "2.1.5",
-  "org.scalameta" %% "mdoc-docs" % "2.1.5",
-  "org.scalanlp" %% "breeze" % "1.0",
-  // "org.scalanlp" %% "breeze-viz" % "1.0",
-  "org.scalanlp" %% "breeze-natives" % "1.0"
+  "org.scalameta" %% "mdoc-docs" % "2.1.5"
 )
 
 enablePlugins(MdocPlugin)

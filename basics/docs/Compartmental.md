@@ -133,7 +133,7 @@ $\beta N/\gamma$ is known as the [*basic reproduction number*](https://en.wikipe
 
 ## Flattening the curve
 
-There are different ways to parametrise the SIR model, but the way we have done it, our basic reproduction number is
+There are different ways to parameterise the SIR model, but the way we have done it, our basic reproduction number is
 $$
 R_0 = \frac{\beta N}{\gamma}
 $$
@@ -179,11 +179,9 @@ Overlay(
 
 ## Herd immunity
 
-You can see from the previous plot that not everyone gets infected in this flattened scenario. This is because the number of infection events is proportional to the number of susceptibles as well as the number of infectious individuals. So, if the number of susceptibles is sufficiently small, infections won't be able to take off.
-
-We previously observed that
+You can see from the previous plot that not everyone gets infected in this flattened scenario. This is because the number of infection events is proportional to the number of susceptibles as well as the number of infectious individuals. So, if the number of susceptibles is sufficiently small, infections won't be able to take off. We previously observed that
 $$ I_{t+1}-I_t = \left(\frac{\beta S_t}{\gamma} - 1\right)\gamma I_t, $$
-and so if $S_t$ is less than $\gamma/\beta$, the epidemic should not be able to take off.
+and so if $S_t < \gamma/\beta$, the epidemic should not be able to take off, and we have [*herd immunity*](https://en.wikipedia.org/wiki/Herd_immunity).
 For our original simulation we had
 ```scala mdoc
 gamma / beta
@@ -193,11 +191,18 @@ but we later modified this to
 1.3 * gamma / (0.5 * beta)
 ```
 
-# SEIR model
+# Extensions
 
 ## SEIR model
 
 One potential issue with the SIR model is that it assumes that individuals become infectious as soon as they are infected. This may be a reasonable approximation for some diseases, but some diseases have a significant latent period between when an individual becomes infected and when they become infectious. 
 
-The SEIR model addresses this problem by introducing an additional population class, *Exposed* (*E*), between *S* and *I*. So infected individuals initially transition from *S* to *E*, at rate $\beta S I$, as previously discussed. Then *E* individuals transition to *I* at rate $a E$, where $1/a$ is the average incubation period.
+The SEIR model addresses this problem by introducing an additional population class, *Exposed* (*E*), between *S* and *I*. So infected individuals initially transition from *S* to *E*, at rate $\beta S I$, as previously discussed. Then *E* individuals transition to *I* at rate $a E$, where $1/a$ is the average incubation period. Transitions from *I* to *R* are as previously. This four-class model often has qualitatively similar behaviour to the SIR model, but the extra flexibility can help it to better capture the quantitative behaviour of a disease with a long latent period.
 
+## Other variations and extensions
+
+There are plenty of other variants of these basic epidemic models. For example, the SIS and SEIS models model the behaviour of diseases which do not convey immunity (with the SIS being essentially logistic growth). Similarly the SIRS and SEIRS model diseases (such as the common cold) where immunity is temporary. Additionally, the removed class, R, can be split into different components, such as *hospitalised*, *recovered* and *died*.
+
+Additional realism can be introduced by creating age structured models, where each class is split into different age groups. Such models are much more realistic, but require a very large number of rate parameters to be specified and/or estimated from data.
+
+All of the models we have been discussing so far apply only to "well-mixed" populations. But in reality, individuals interact in 2d space, and spatial effects (especially associated with varying population density) can sometimes be important.
