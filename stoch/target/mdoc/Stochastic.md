@@ -15,7 +15,6 @@ import smfsb._
 import breeze.linalg._
 import breeze.numerics._
 ```
-
 ```scala
 val dMod = SpnModels.sir[IntState]()
 // dMod: Spn[IntState] = UnmarkedSpn(
@@ -24,72 +23,172 @@ val dMod = SpnModels.sir[IntState]()
 // 0  1  0  ,
 //   0  2  0  
 // 0  0  1  ,
-//   smfsb.SpnModels$$$Lambda$6775/2093194212@44a0b56e
+//   smfsb.SpnModels$$$Lambda$5355/612269312@44e1dbbf
 // )
 ```
 
 
 ## Simulation
 
-We can feed a model into a simulation algorithm and get back a function for simulating from the dynamics of the process. We can then feed this function for simulating from the transition kernel of the process into a function that unfolds the dynamics into a time series of values.
+We can feed a model into a simulation algorithm and get back a function (closure) for simulating from the dynamics of the process. We can then feed this function for simulating from the transition kernel of the process into a function that unfolds the dynamics into a time series of system states.
 
 ```scala
 val stepSIRds = Step.gillespie(dMod)
-// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$6776/466719227@222cf2ee
+// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5356/772652843@1086762
+```
+```scala
 val tsSIRds = Sim.ts(DenseVector(100,5,0), 0.0, 10.0,
 	0.05, stepSIRds)
-// tsSIRds: Ts[IntState] = List(
-//   (0.0, DenseVector(100, 5, 0)),
-//   (0.05, DenseVector(97, 8, 0)),
-//   (0.1, DenseVector(92, 13, 0)),
-//   (0.15000000000000002, DenseVector(80, 24, 1)),
-//   (0.2, DenseVector(66, 37, 2)),
-//   (0.25, DenseVector(49, 53, 3)),
-//   (0.3, DenseVector(41, 59, 5)),
-//   (0.35, DenseVector(30, 67, 8)),
-//   (0.39999999999999997, DenseVector(21, 73, 11)),
-//   (0.44999999999999996, DenseVector(13, 77, 15)),
-//   (0.49999999999999994, DenseVector(10, 77, 18)),
-//   (0.5499999999999999, DenseVector(6, 79, 20)),
-//   (0.6, DenseVector(4, 78, 23)),
-//   (0.65, DenseVector(3, 78, 24)),
-//   (0.7000000000000001, DenseVector(2, 78, 25)),
-//   (0.7500000000000001, DenseVector(2, 76, 27)),
-//   (0.8000000000000002, DenseVector(2, 74, 29)),
-//   (0.8500000000000002, DenseVector(1, 74, 30)),
-//   (0.9000000000000002, DenseVector(1, 71, 33)),
-//   (0.9500000000000003, DenseVector(0, 71, 34)),
-//   (1.0000000000000002, DenseVector(0, 68, 37)),
-//   (1.0500000000000003, DenseVector(0, 66, 39)),
-//   (1.1000000000000003, DenseVector(0, 64, 41)),
-//   (1.1500000000000004, DenseVector(0, 63, 42)),
-//   (1.2000000000000004, DenseVector(0, 61, 44)),
-//   (1.2500000000000004, DenseVector(0, 60, 45)),
-//   (1.3000000000000005, DenseVector(0, 58, 47)),
-//   (1.3500000000000005, DenseVector(0, 58, 47)),
-//   (1.4000000000000006, DenseVector(0, 58, 47)),
-//   (1.4500000000000006, DenseVector(0, 58, 47)),
-//   (1.5000000000000007, DenseVector(0, 58, 47)),
-//   (1.5500000000000007, DenseVector(0, 55, 50)),
-//   (1.6000000000000008, DenseVector(0, 54, 51)),
-//   (1.6500000000000008, DenseVector(0, 53, 52)),
-//   (1.7000000000000008, DenseVector(0, 50, 55)),
-//   (1.7500000000000009, DenseVector(0, 49, 56)),
-//   (1.800000000000001, DenseVector(0, 48, 57)),
-//   (1.850000000000001, DenseVector(0, 47, 58)),
-//   (1.900000000000001, DenseVector(0, 46, 59)),
-//   (1.950000000000001, DenseVector(0, 46, 59)),
-//   (2.000000000000001, DenseVector(0, 45, 60)),
-//   (2.0500000000000007, DenseVector(0, 45, 60)),
-//   (2.1000000000000005, DenseVector(0, 45, 60)),
-//   (2.1500000000000004, DenseVector(0, 43, 62)),
-//   (2.2, DenseVector(0, 42, 63)),
-//   (2.25, DenseVector(0, 42, 63)),
-//   (2.3, DenseVector(0, 41, 64)),
-//   (2.3499999999999996, DenseVector(0, 41, 64)),
-// ...
+```	
+```scala
+import Sim.plotTs
 plotTs(tsSIRds, "Gillespie simulation of the SIR model")
-// res0: geometry.Drawable = Group(
+```
+
+## Plot (exact discrete stochastic dynamics)
+
+![](SIRds.png)
+
+# Approximate simulation algorithms
+
+## Approximating the discrete stochastic dynamics
+
+The [*Gillespie algorithm*](https://en.wikipedia.org/wiki/Gillespie_algorithm) simulates every transition event explicitly. This leads to exact simulation of the underlying stochastic process, but can come at a high computational price. If necessary, we can speed up simulation by discretising time, and using the [*Poisson distribution*](https://en.wikipedia.org/wiki/Poisson_distribution) to advance the dynamics.
+
+```scala
+val stepSIRdsa = Step.pts(dMod)
+val tsSIRdsa = Sim.ts(DenseVector(100,5,0), 0.0, 10.0,
+	0.05, stepSIRdsa)
+plotTs(tsSIRdsa, "Poisson simulation of the SIR model")
+```
+
+## Plot (approximate discrete stochastic dynamics)
+
+![](SIRdsa.png)
+
+## Continuous state approximations
+
+When dealing with very large populations and numbers of transition events, even the Poisson discretisation can become problematic. In this case, a continuous state approximation can be used which represents the process as a [*stochastic differential equation*](https://en.wikipedia.org/wiki/Stochastic_differential_equation) to be numerically integrated. For this, a continuous state instantiation of the SIR model must be used.
+```scala
+val cMod = SpnModels.sir[DoubleState]()
+val stepSIRcs = Step.cle(cMod)
+val tsSIRcs = Sim.ts(DenseVector(100.0,5.0,0.0), 
+    0.0, 10.0, 0.05, stepSIRcs)
+plotTs(tsSIRcs, "Langevin simulation of the SIR model")
+```
+
+## Plot (continuous stochastic dynamics)
+
+![](SIRcs.png)
+
+## Mass-action kinetics
+
+If we aren't interested in stochastic effects, we can ignore the noise to get a representation of the model as a set of [*ordinary differential equations*](https://en.wikipedia.org/wiki/Ordinary_differential_equation) to be numerically integrated.
+```scala
+val stepSIRcd = Step.euler(cMod)
+val tsSIRcd = Sim.ts(DenseVector(100.0,5.0,0.0),
+    0.0, 10.0, 0.05, stepSIRcd)
+plotTs(tsSIRcd,
+    "Deterministic simulation of the SIR model")
+```
+
+## Plot (continuous stochastic dynamics)
+
+![](SIRcd.png)
+
+## Population modelling
+
+Let's now see how to mimic the example we looked at in part 2 using discrete time deterministic kinetics. For this we need a model with appropriate parameters.
+```scala
+val p0 = DenseVector(1.0e7, 2.0, 0.0)
+val cPop = SpnModels.sir[DoubleState](DenseVector(5.0e-8, 0.1))
+val stepPopcd = Step.euler(cPop)
+val tsPopcd = Sim.ts(p0, 0.0, 100.0, 0.5, stepPopcd)
+plotTs(tsPopcd,
+    "Deterministic simulation of the SIR model")
+```
+Note that there isn't an exact match with the discrete time model we considered earlier, but that they are qualitatively very similar.
+
+## Plot (deterministic population dynamics)
+
+![](Popcd.png)
+
+## Stochastic model
+
+We can compare the ODE model with the SDE equivalent.
+```scala
+val stepPopcs = Step.cle(cPop)
+val tsPopcs = Sim.ts(p0, 0.0, 100.0, 0.5, stepPopcs)
+plotTs(tsPopcs,
+    "Stochastic simulation of the SIR model")
+```
+Note that due to the very large number of individuals involved, laws of large numbers render stochastic effects imperceptible here.
+
+## Plot (stochastic population dynamics)
+
+![](Popcs.png)
+
+# SEIR
+
+## SEIR
+
+```scala
+val stepSEIR = Step.gillespie(SpnModels.seir[IntState]())
+// stepSEIR: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5356/772652843@62a422cb
+val tsSEIR = Sim.ts(DenseVector(100,5,0,0),
+    0.0, 20.0, 0.05, stepSEIR)
+// tsSEIR: Ts[IntState] = List(
+//   (0.0, DenseVector(100, 5, 0, 0)),
+//   (0.05, DenseVector(100, 5, 0, 0)),
+//   (0.1, DenseVector(100, 5, 0, 0)),
+//   (0.15000000000000002, DenseVector(100, 5, 0, 0)),
+//   (0.2, DenseVector(100, 5, 0, 0)),
+//   (0.25, DenseVector(100, 5, 0, 0)),
+//   (0.3, DenseVector(100, 5, 0, 0)),
+//   (0.35, DenseVector(100, 5, 0, 0)),
+//   (0.39999999999999997, DenseVector(100, 5, 0, 0)),
+//   (0.44999999999999996, DenseVector(100, 5, 0, 0)),
+//   (0.49999999999999994, DenseVector(100, 5, 0, 0)),
+//   (0.5499999999999999, DenseVector(100, 5, 0, 0)),
+//   (0.6, DenseVector(100, 5, 0, 0)),
+//   (0.65, DenseVector(100, 5, 0, 0)),
+//   (0.7000000000000001, DenseVector(100, 5, 0, 0)),
+//   (0.7500000000000001, DenseVector(100, 5, 0, 0)),
+//   (0.8000000000000002, DenseVector(100, 5, 0, 0)),
+//   (0.8500000000000002, DenseVector(100, 5, 0, 0)),
+//   (0.9000000000000002, DenseVector(100, 5, 0, 0)),
+//   (0.9500000000000003, DenseVector(100, 5, 0, 0)),
+//   (1.0000000000000002, DenseVector(100, 5, 0, 0)),
+//   (1.0500000000000003, DenseVector(100, 5, 0, 0)),
+//   (1.1000000000000003, DenseVector(100, 5, 0, 0)),
+//   (1.1500000000000004, DenseVector(100, 5, 0, 0)),
+//   (1.2000000000000004, DenseVector(100, 5, 0, 0)),
+//   (1.2500000000000004, DenseVector(100, 5, 0, 0)),
+//   (1.3000000000000005, DenseVector(100, 5, 0, 0)),
+//   (1.3500000000000005, DenseVector(100, 5, 0, 0)),
+//   (1.4000000000000006, DenseVector(100, 5, 0, 0)),
+//   (1.4500000000000006, DenseVector(100, 5, 0, 0)),
+//   (1.5000000000000007, DenseVector(100, 5, 0, 0)),
+//   (1.5500000000000007, DenseVector(100, 4, 1, 0)),
+//   (1.6000000000000008, DenseVector(99, 5, 1, 0)),
+//   (1.6500000000000008, DenseVector(98, 6, 1, 0)),
+//   (1.7000000000000008, DenseVector(97, 7, 1, 0)),
+//   (1.7500000000000009, DenseVector(97, 7, 1, 0)),
+//   (1.800000000000001, DenseVector(96, 8, 1, 0)),
+//   (1.850000000000001, DenseVector(96, 8, 1, 0)),
+//   (1.900000000000001, DenseVector(95, 9, 1, 0)),
+//   (1.950000000000001, DenseVector(95, 9, 1, 0)),
+//   (2.000000000000001, DenseVector(94, 10, 1, 0)),
+//   (2.0500000000000007, DenseVector(94, 10, 1, 0)),
+//   (2.1000000000000005, DenseVector(93, 11, 1, 0)),
+//   (2.1500000000000004, DenseVector(93, 11, 1, 0)),
+//   (2.2, DenseVector(93, 11, 1, 0)),
+//   (2.25, DenseVector(93, 11, 1, 0)),
+//   (2.3, DenseVector(92, 12, 1, 0)),
+//   (2.3499999999999996, DenseVector(91, 13, 1, 0)),
+// ...
+plotTs(tsSEIR, "Gillespie simulation of the SEIR model")
+// res11: geometry.Drawable = Group(
 //   Vector(
 //     Translate(
 //       StrokeStyle(
@@ -114,112 +213,30 @@ plotTs(tsSIRds, "Gillespie simulation of the SIR model")
 //                   Path(
 //                     Vector(
 //                       Point(0.0, 0.0),
-//                       Point(3.067826334635417, 12.900000000000034),
-//                       Point(6.135652669270834, 34.400000000000034),
-//                       Point(9.203479003906251, 86.0),
-//                       Point(12.271305338541667, 146.2),
-//                       Point(15.339131673177084, 219.3),
-//                       Point(18.4069580078125, 253.70000000000005),
-//                       Point(21.474784342447915, 301.0),
-//                       Point(24.54261067708333, 339.7),
-//                       Point(27.610437011718748, 374.1),
-//                       Point(30.678263346354164, 387.0),
-//                       Point(33.74608968098958, 404.2),
-//                       Point(36.813916015625, 412.8),
-//                       Point(39.88174235026042, 417.1),
-//                       Point(42.94956868489584, 421.4),
-//                       Point(46.01739501953126, 421.4),
-//                       Point(49.08522135416668, 421.4),
-//                       Point(52.1530476888021, 425.7),
-//                       Point(55.22087402343752, 425.7),
-//                       Point(58.28870035807294, 430.0),
-//                       Point(61.35652669270835, 430.0),
-//                       Point(64.42435302734377, 430.0),
-//                       Point(67.49217936197918, 430.0),
-//                       Point(70.56000569661461, 430.0),
-//                       Point(73.62783203125002, 430.0),
-// ...
-```
-
-## Plot
-
-![](SIRds.png)
-
-## Approximating the discrete stochastic dynamics
-
-The [*Gillespie algorithm*](https://en.wikipedia.org/wiki/Gillespie_algorithm) simulates every transition event explicitly. This leads to exact simulation of the underlying stochastic process, but can come at a high computational price. 
-
-```scala
-val cMod = SpnModels.sir[DoubleState]()
-// cMod: Spn[DoubleState] = UnmarkedSpn(
-//   List("S", "I", "R"),
-//   1  1  0  
-// 0  1  0  ,
-//   0  2  0  
-// 0  0  1  ,
-//   smfsb.SpnModels$$$Lambda$6775/2093194212@2c8f1e77
-// )
-val stepSIRcd = Step.euler(cMod)
-// stepSIRcd: (DoubleState, Time, Time) => DoubleState = smfsb.Step$$$Lambda$6989/503544831@77363dd5
-```
-
-# SEIR
-
-## SEIR
-
-```scala
-val stepSEIR = Step.gillespie(SpnModels.seir[IntState]())
-// stepSEIR: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$6776/466719227@49070cc6
-val tsSEIR = Sim.ts(DenseVector(100,5,0,0), 0.0, 20.0, 0.05, stepSEIR)
-// tsSEIR: Ts[IntState] = List(
-//   (0.0, DenseVector(100, 5, 0, 0)),
-//   (0.05, DenseVector(100, 5, 0, 0)),
-//   (0.1, DenseVector(100, 5, 0, 0)),
-//   (0.15000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.2, DenseVector(100, 5, 0, 0)),
-//   (0.25, DenseVector(100, 5, 0, 0)),
-//   (0.3, DenseVector(100, 5, 0, 0)),
-//   (0.35, DenseVector(100, 5, 0, 0)),
-//   (0.39999999999999997, DenseVector(100, 5, 0, 0)),
-//   (0.44999999999999996, DenseVector(100, 5, 0, 0)),
-//   (0.49999999999999994, DenseVector(100, 5, 0, 0)),
-//   (0.5499999999999999, DenseVector(100, 5, 0, 0)),
-//   (0.6, DenseVector(100, 5, 0, 0)),
-//   (0.65, DenseVector(100, 5, 0, 0)),
-//   (0.7000000000000001, DenseVector(100, 5, 0, 0)),
-//   (0.7500000000000001, DenseVector(100, 5, 0, 0)),
-//   (0.8000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.8500000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.9000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.9500000000000003, DenseVector(100, 4, 1, 0)),
-//   (1.0000000000000002, DenseVector(100, 4, 1, 0)),
-//   (1.0500000000000003, DenseVector(100, 4, 1, 0)),
-//   (1.1000000000000003, DenseVector(99, 5, 1, 0)),
-//   (1.1500000000000004, DenseVector(99, 5, 1, 0)),
-//   (1.2000000000000004, DenseVector(98, 6, 1, 0)),
-//   (1.2500000000000004, DenseVector(97, 7, 1, 0)),
-//   (1.3000000000000005, DenseVector(96, 8, 1, 0)),
-//   (1.3500000000000005, DenseVector(96, 8, 1, 0)),
-//   (1.4000000000000006, DenseVector(96, 8, 1, 0)),
-//   (1.4500000000000006, DenseVector(96, 8, 1, 0)),
-//   (1.5000000000000007, DenseVector(95, 9, 1, 0)),
-//   (1.5500000000000007, DenseVector(94, 10, 1, 0)),
-//   (1.6000000000000008, DenseVector(94, 10, 1, 0)),
-//   (1.6500000000000008, DenseVector(93, 11, 1, 0)),
-//   (1.7000000000000008, DenseVector(90, 14, 1, 0)),
-//   (1.7500000000000009, DenseVector(90, 14, 1, 0)),
-//   (1.800000000000001, DenseVector(90, 14, 1, 0)),
-//   (1.850000000000001, DenseVector(89, 15, 1, 0)),
-//   (1.900000000000001, DenseVector(88, 15, 2, 0)),
-//   (1.950000000000001, DenseVector(84, 19, 2, 0)),
-//   (2.000000000000001, DenseVector(83, 20, 2, 0)),
-//   (2.0500000000000007, DenseVector(83, 20, 2, 0)),
-//   (2.1000000000000005, DenseVector(83, 20, 2, 0)),
-//   (2.1500000000000004, DenseVector(81, 22, 2, 0)),
-//   (2.2, DenseVector(81, 21, 3, 0)),
-//   (2.25, DenseVector(78, 24, 3, 0)),
-//   (2.3, DenseVector(77, 25, 3, 0)),
-//   (2.3499999999999996, DenseVector(74, 28, 3, 0)),
+//                       Point(1.4725566406250001, 0.0),
+//                       Point(2.9451132812500003, 0.0),
+//                       Point(4.417669921875, 0.0),
+//                       Point(5.8902265625000005, 0.0),
+//                       Point(7.362783203125, 0.0),
+//                       Point(8.835339843749999, 0.0),
+//                       Point(10.307896484374998, 0.0),
+//                       Point(11.780453125, 0.0),
+//                       Point(13.253009765624999, 0.0),
+//                       Point(14.725566406249998, 0.0),
+//                       Point(16.198123046874997, 0.0),
+//                       Point(17.670679687499998, 0.0),
+//                       Point(19.143236328125, 0.0),
+//                       Point(20.61579296875, 0.0),
+//                       Point(22.088349609375, 0.0),
+//                       Point(23.560906250000002, 0.0),
+//                       Point(25.033462890625007, 0.0),
+//                       Point(26.506019531250008, 0.0),
+//                       Point(27.97857617187501, 0.0),
+//                       Point(29.451132812500006, 0.0),
+//                       Point(30.923689453125007, 0.0),
+//                       Point(32.39624609375001, 0.0),
+//                       Point(33.86880273437501, 0.0),
+//                       Point(35.34135937500001, 0.0),
 // ...
 ```
 
