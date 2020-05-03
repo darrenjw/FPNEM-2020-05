@@ -12,8 +12,8 @@
 
 ## Outline
 
-* The directory [basics](basics/) contains a Scala `sbt` project containing everything needed to build and run the examples and presentation. All you need is a recent JDK and [sbt](https://www.scala-sbt.org/) in order to build and run everything.
-* The directory [stoch](stoch/) contains another Scala `sbt` project, but this one includes a dependency on my [scala-smfsb](https://github.com/darrenjw/scala-smfsb) library for stochastic simulation of SEIR models in continuous time.
+* The directory [basics](basics/) contains a Scala `sbt` project containing everything needed to build and run the examples and presentation. All you need is a recent JDK and [sbt](https://www.scala-sbt.org/) in order to build and run everything. No calculus or probability theory is assumed. Most of this should be understandable with only GCSE maths (I do mention logarithms at one point, but they are not essential).
+* The directory [stoch](stoch/) contains another Scala `sbt` project, but this one includes a dependency on my [scala-smfsb](https://github.com/darrenjw/scala-smfsb) library for stochastic simulation of SEIR models in continuous time. This gives a quick illustration of some more advanced modelling approaches, but skipping over all of the underpinning maths.
 
 
 Copyright (C) 2020 [Darren J Wilkinson](https://darrenjw.github.io/)

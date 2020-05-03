@@ -2,7 +2,7 @@
 
 A quick introduction to modelling growth and epidemic processes without any calculus or probability theory.
 
-This is a Scala `sbt` project. Doing `sbt run` will run a demo, and `sbt mdoc` will compile the [mdoc](https://scalameta.org/mdoc/) markdown files in [docs](docs/).
+This is a Scala `sbt` project. Doing `sbt run` will run a demo, and `sbt mdoc` will compile the [mdoc](https://scalameta.org/mdoc/) markdown files in [docs](docs/). To follow along interactively in the REPL, just run `sbt console`.
 
 There's also a `Makefile` in here, so just typing `make` should build all of the presentation material.
 
