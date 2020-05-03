@@ -10,4 +10,11 @@ There's a `Makefile`, and `make` will build all of the presentation material.
 
 For anyone who is interested in the underpinning maths, [read my book!](https://github.com/darrenjw/smfsb/blob/master/README.md)
 
+### Exercises
+
+1. Read my blog post on [stochastic reaction-diffusion modelling](https://darrenjw.wordpress.com/2019/01/22/stochastic-reaction-diffusion-modelling/) and run the spatial SIR example.
+2. Simulate a spatial SEIR model, using both stochastic and deterministic algorithms.
+3. A 100x100 grid contains 10^4 cells, so if each contains 10^3 susceptibles, there will be 10^7 susceptibles in total. Run a spatial version of the SIR model from Part 3 with comparable parameters and relatively slow diffusion. Monitor the total counts over the grid, and compare the overall behaviour of the spatial simulation with the well-mixed case.
+
+
 #### eof
