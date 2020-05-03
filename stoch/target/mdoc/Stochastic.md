@@ -23,7 +23,7 @@ val dMod = SpnModels.sir[IntState]()
 // 0  1  0  ,
 //   0  2  0  
 // 0  0  1  ,
-//   smfsb.SpnModels$$$Lambda$5355/612269312@44e1dbbf
+//   smfsb.SpnModels$$$Lambda$5347/164114484@1e43f656
 // )
 ```
 
@@ -34,7 +34,7 @@ We can feed a model into a simulation algorithm and get back a function (closure
 
 ```scala
 val stepSIRds = Step.gillespie(dMod)
-// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5356/772652843@1086762
+// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5348/1412969827@6b1ad010
 ```
 ```scala
 val tsSIRds = Sim.ts(DenseVector(100,5,0), 0.0, 10.0,
@@ -132,117 +132,25 @@ Note that due to the very large number of individuals involved, laws of large nu
 
 ## SEIR
 
+The library also includes an SEIR model, so we can also look at that.
+
 ```scala
-val stepSEIR = Step.gillespie(SpnModels.seir[IntState]())
-// stepSEIR: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5356/772652843@62a422cb
-val tsSEIR = Sim.ts(DenseVector(100,5,0,0),
-    0.0, 20.0, 0.05, stepSEIR)
-// tsSEIR: Ts[IntState] = List(
-//   (0.0, DenseVector(100, 5, 0, 0)),
-//   (0.05, DenseVector(100, 5, 0, 0)),
-//   (0.1, DenseVector(100, 5, 0, 0)),
-//   (0.15000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.2, DenseVector(100, 5, 0, 0)),
-//   (0.25, DenseVector(100, 5, 0, 0)),
-//   (0.3, DenseVector(100, 5, 0, 0)),
-//   (0.35, DenseVector(100, 5, 0, 0)),
-//   (0.39999999999999997, DenseVector(100, 5, 0, 0)),
-//   (0.44999999999999996, DenseVector(100, 5, 0, 0)),
-//   (0.49999999999999994, DenseVector(100, 5, 0, 0)),
-//   (0.5499999999999999, DenseVector(100, 5, 0, 0)),
-//   (0.6, DenseVector(100, 5, 0, 0)),
-//   (0.65, DenseVector(100, 5, 0, 0)),
-//   (0.7000000000000001, DenseVector(100, 5, 0, 0)),
-//   (0.7500000000000001, DenseVector(100, 5, 0, 0)),
-//   (0.8000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.8500000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.9000000000000002, DenseVector(100, 5, 0, 0)),
-//   (0.9500000000000003, DenseVector(100, 5, 0, 0)),
-//   (1.0000000000000002, DenseVector(100, 5, 0, 0)),
-//   (1.0500000000000003, DenseVector(100, 5, 0, 0)),
-//   (1.1000000000000003, DenseVector(100, 5, 0, 0)),
-//   (1.1500000000000004, DenseVector(100, 5, 0, 0)),
-//   (1.2000000000000004, DenseVector(100, 5, 0, 0)),
-//   (1.2500000000000004, DenseVector(100, 5, 0, 0)),
-//   (1.3000000000000005, DenseVector(100, 5, 0, 0)),
-//   (1.3500000000000005, DenseVector(100, 5, 0, 0)),
-//   (1.4000000000000006, DenseVector(100, 5, 0, 0)),
-//   (1.4500000000000006, DenseVector(100, 5, 0, 0)),
-//   (1.5000000000000007, DenseVector(100, 5, 0, 0)),
-//   (1.5500000000000007, DenseVector(100, 4, 1, 0)),
-//   (1.6000000000000008, DenseVector(99, 5, 1, 0)),
-//   (1.6500000000000008, DenseVector(98, 6, 1, 0)),
-//   (1.7000000000000008, DenseVector(97, 7, 1, 0)),
-//   (1.7500000000000009, DenseVector(97, 7, 1, 0)),
-//   (1.800000000000001, DenseVector(96, 8, 1, 0)),
-//   (1.850000000000001, DenseVector(96, 8, 1, 0)),
-//   (1.900000000000001, DenseVector(95, 9, 1, 0)),
-//   (1.950000000000001, DenseVector(95, 9, 1, 0)),
-//   (2.000000000000001, DenseVector(94, 10, 1, 0)),
-//   (2.0500000000000007, DenseVector(94, 10, 1, 0)),
-//   (2.1000000000000005, DenseVector(93, 11, 1, 0)),
-//   (2.1500000000000004, DenseVector(93, 11, 1, 0)),
-//   (2.2, DenseVector(93, 11, 1, 0)),
-//   (2.25, DenseVector(93, 11, 1, 0)),
-//   (2.3, DenseVector(92, 12, 1, 0)),
-//   (2.3499999999999996, DenseVector(91, 13, 1, 0)),
-// ...
-plotTs(tsSEIR, "Gillespie simulation of the SEIR model")
-// res11: geometry.Drawable = Group(
-//   Vector(
-//     Translate(
-//       StrokeStyle(
-//         Group(
-//           Vector(
-//             Translate(Rotate(Line(516.0, 1.0), 90.0), -0.5000000000000158, 0.0),
-//             Translate(Line(736.2783203125, 1.0), 0.0, 515.5)
-//           )
-//         ),
-//         HSLA(0.0, 0.0, 12.0, 1.0)
-//       ),
-//       63.72167968750004,
-//       33.0
-//     ),
-//     Translate(
-//       Group(
-//         Vector(
-//           Resize(
-//             LineDash(
-//               StrokeStyle(
-//                 Translate(
-//                   Path(
-//                     Vector(
-//                       Point(0.0, 0.0),
-//                       Point(1.4725566406250001, 0.0),
-//                       Point(2.9451132812500003, 0.0),
-//                       Point(4.417669921875, 0.0),
-//                       Point(5.8902265625000005, 0.0),
-//                       Point(7.362783203125, 0.0),
-//                       Point(8.835339843749999, 0.0),
-//                       Point(10.307896484374998, 0.0),
-//                       Point(11.780453125, 0.0),
-//                       Point(13.253009765624999, 0.0),
-//                       Point(14.725566406249998, 0.0),
-//                       Point(16.198123046874997, 0.0),
-//                       Point(17.670679687499998, 0.0),
-//                       Point(19.143236328125, 0.0),
-//                       Point(20.61579296875, 0.0),
-//                       Point(22.088349609375, 0.0),
-//                       Point(23.560906250000002, 0.0),
-//                       Point(25.033462890625007, 0.0),
-//                       Point(26.506019531250008, 0.0),
-//                       Point(27.97857617187501, 0.0),
-//                       Point(29.451132812500006, 0.0),
-//                       Point(30.923689453125007, 0.0),
-//                       Point(32.39624609375001, 0.0),
-//                       Point(33.86880273437501, 0.0),
-//                       Point(35.34135937500001, 0.0),
-// ...
+val stepSEIR = Step.euler(SpnModels.seir[DoubleState](
+    DenseVector(5.0e-8, 0.3, 0.1)))
+val tsSEIR = Sim.ts(DenseVector(1.0e7, 0.0, 2.0, 0.0),
+    0.0, 150.0, 0.5, stepSEIR)
+plotTs(tsSEIR,
+    "Deterministic simulation of the SEIR model")
 ```
+Note the change in time axis.
+
+## Plot (stochastic population dynamics)
+
+![](Seir.png)
 
 # Spatial effects
 
 ## SEIR as a reaction diffusion process
 
-
+So far, everything we have considered is based on the assumption of a "well-mixed" population. But in practice, spatial effects can also be important. The library also includes functions for spatial (stochastic) simulation. Again, everything is compositional, so you just plug a function (closure) for simulating from a well-mixed transition kernel into a spatial simulation function, and it returns a function (closure) for simulating the spatial reaction-diffusion system using a comonadic pointed image type. There are [*examples*](https://github.com/darrenjw/scala-smfsb/tree/master/examples) of this in the library, and I also have an old [*blog post*](https://darrenjw.wordpress.com/2019/01/22/stochastic-reaction-diffusion-modelling/) looking at the use of the library for spatial reaction-diffusion simulation which finishes with a spatial SIR model.
 

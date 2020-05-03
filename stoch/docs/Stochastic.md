@@ -174,17 +174,28 @@ plotTs(tsPopcs,
 
 ## SEIR
 
-```scala mdoc
-val stepSEIR = Step.gillespie(SpnModels.seir[IntState]())
-val tsSEIR = Sim.ts(DenseVector(100,5,0,0),
-    0.0, 20.0, 0.05, stepSEIR)
-plotTs(tsSEIR, "Gillespie simulation of the SEIR model")
+The library also includes an SEIR model, so we can also look at that.
 
+```scala mdoc:silent
+val stepSEIR = Step.euler(SpnModels.seir[DoubleState](
+    DenseVector(5.0e-8, 0.3, 0.1)))
+val tsSEIR = Sim.ts(DenseVector(1.0e7, 0.0, 2.0, 0.0),
+    0.0, 150.0, 0.5, stepSEIR)
+plotTs(tsSEIR,
+    "Deterministic simulation of the SEIR model")
 ```
+Note the change in time axis.
+
+## Plot (stochastic population dynamics)
+
+```scala mdoc:evilplot:Seir.png
+plotTs(tsSEIR, "Deterministic simulation of the SEIR model")
+```
+
 
 # Spatial effects
 
 ## SEIR as a reaction diffusion process
 
-
+So far, everything we have considered is based on the assumption of a "well-mixed" population. But in practice, spatial effects can also be important. The library also includes functions for spatial (stochastic) simulation. Again, everything is compositional, so you just plug a function (closure) for simulating from a well-mixed transition kernel into a spatial simulation function, and it returns a function (closure) for simulating the spatial reaction-diffusion system using a comonadic pointed image type. There are [*examples*](https://github.com/darrenjw/scala-smfsb/tree/master/examples) of this in the library, and I also have an old [*blog post*](https://darrenjw.wordpress.com/2019/01/22/stochastic-reaction-diffusion-modelling/) looking at the use of the library for spatial reaction-diffusion simulation which finishes with a spatial SIR model.
 
