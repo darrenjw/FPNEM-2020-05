@@ -79,9 +79,9 @@ val rpoints = pop.zipWithIndex.
   take(100).toList
 
 Overlay(
- ScatterPlot.series(spoints, "S", dodgerBlue),
- ScatterPlot.series(ipoints, "I", crimson),
- ScatterPlot.series(rpoints, "R", green)
+ LinePlot.series(spoints, "S", dodgerBlue),
+ LinePlot.series(ipoints, "I", crimson),
+ LinePlot.series(rpoints, "R", green)
  ).xAxis()
   .yAxis()
   .overlayLegend()
@@ -107,9 +107,9 @@ val lrpoints = pop.zipWithIndex.
   take(100).toList
 
 Overlay(
- ScatterPlot.series(lspoints, "S", dodgerBlue),
- ScatterPlot.series(lipoints, "I", crimson),
- ScatterPlot.series(lrpoints, "R", green)
+ LinePlot.series(lspoints, "S", dodgerBlue),
+ LinePlot.series(lipoints, "I", crimson),
+ LinePlot.series(lrpoints, "R", green)
  ).xAxis()
   .yAxis()
   .overlayLegend()
@@ -163,9 +163,9 @@ val frpoints = popF.zipWithIndex.
   take(300).toList
 
 Overlay(
- ScatterPlot.series(fspoints, "S", dodgerBlue),
- ScatterPlot.series(fipoints, "I", crimson),
- ScatterPlot.series(frpoints, "R", green)
+ LinePlot.series(fspoints, "S", dodgerBlue),
+ LinePlot.series(fipoints, "I", crimson),
+ LinePlot.series(frpoints, "R", green)
  ).xAxis()
   .yAxis()
   .overlayLegend()
