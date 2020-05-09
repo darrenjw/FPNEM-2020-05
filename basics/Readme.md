@@ -16,7 +16,7 @@ There's also a `Makefile` in here, so just typing `make` should build all of the
 3. [for Scala people] Implement an SEIR model, and compare the dynamics of SEIR and SIR models for comparable parameter choices.
 4. [for non-Scala people] Implement the SIR model in the language of your choice, and make sure you can replicate the examples from Part 2.
 5. Adapt the SIR simulation code to allow step changes to the model parameters during the course of a simulation run. Use this to simulate the effect of a three month lockdown (which brings the reproduction rate down to 0.7, say). How long before the number of infected people shoots up when the lockdown is lifted?
-6. [for experts only] Figure out a UK exit strategy that doesn't overwhelm the NHS in the absence of a cure or vaccine.
+
 
 
 #### eof
