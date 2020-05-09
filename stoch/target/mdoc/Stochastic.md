@@ -23,7 +23,7 @@ val dMod = SpnModels.sir[IntState]()
 // 0  1  0  ,
 //   0  2  0  
 // 0  0  1  ,
-//   smfsb.SpnModels$$$Lambda$5347/164114484@1e43f656
+//   smfsb.SpnModels$$$Lambda$6804/1472082550@ddbd20f
 // )
 ```
 
@@ -34,7 +34,7 @@ We can feed a model into a simulation algorithm and get back a function (closure
 
 ```scala
 val stepSIRds = Step.gillespie(dMod)
-// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5348/1412969827@6b1ad010
+// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$6805/632352775@33ac173
 ```
 ```scala
 val tsSIRds = Sim.ts(DenseVector(100,5,0), 0.0, 10.0,
