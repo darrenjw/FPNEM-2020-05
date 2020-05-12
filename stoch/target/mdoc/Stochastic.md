@@ -23,7 +23,7 @@ val dMod = SpnModels.sir[IntState]()
 // 0  1  0  ,
 //   0  2  0  
 // 0  0  1  ,
-//   smfsb.SpnModels$$$Lambda$6804/1472082550@ddbd20f
+//   smfsb.SpnModels$$$Lambda$5363/1845478241@734c56a9
 // )
 ```
 
@@ -34,7 +34,7 @@ We can feed a model into a simulation algorithm and get back a function (closure
 
 ```scala
 val stepSIRds = Step.gillespie(dMod)
-// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$6805/632352775@33ac173
+// stepSIRds: (IntState, Time, Time) => IntState = smfsb.Step$$$Lambda$5364/1740643132@686b68a2
 ```
 ```scala
 val tsSIRds = Sim.ts(DenseVector(100,5,0), 0.0, 10.0,
@@ -101,7 +101,8 @@ plotTs(tsSIRcd,
 Let's now see how to mimic the example we looked at in part 2 using discrete time deterministic kinetics. For this we need a model with appropriate parameters.
 ```scala
 val p0 = DenseVector(1.0e7, 2.0, 0.0)
-val cPop = SpnModels.sir[DoubleState](DenseVector(5.0e-8, 0.1))
+val cPop = SpnModels.sir[DoubleState](DenseVector(
+    5.0e-8, 0.1))
 val stepPopcd = Step.euler(cPop)
 val tsPopcd = Sim.ts(p0, 0.0, 100.0, 0.5, stepPopcd)
 plotTs(tsPopcd,

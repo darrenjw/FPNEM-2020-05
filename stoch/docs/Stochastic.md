@@ -136,7 +136,8 @@ plotTs(tsSIRcd, "Deterministic simulation of the SIR model")
 Let's now see how to mimic the example we looked at in part 2 using discrete time deterministic kinetics. For this we need a model with appropriate parameters.
 ```scala mdoc:silent
 val p0 = DenseVector(1.0e7, 2.0, 0.0)
-val cPop = SpnModels.sir[DoubleState](DenseVector(5.0e-8, 0.1))
+val cPop = SpnModels.sir[DoubleState](DenseVector(
+    5.0e-8, 0.1))
 val stepPopcd = Step.euler(cPop)
 val tsPopcd = Sim.ts(p0, 0.0, 100.0, 0.5, stepPopcd)
 plotTs(tsPopcd,
